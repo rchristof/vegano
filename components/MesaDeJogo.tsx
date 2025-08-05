@@ -83,10 +83,13 @@ function DraggableCarta({
         transform: CSS.Transform.toString(transform),
         transition,
         zIndex: isActive ? 50 : 1,
+        backgroundImage: carta.image ? `url(${carta.image})` : undefined,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
       {...attributes}
       {...listenersSafe}
-      className={`w-20 h-32 rounded-lg shadow-lg border-2 border-gray-300 bg-gradient-to-br from-white to-gray-200 flex items-center justify-center cursor-grab select-none transition-transform duration-150
+      className={`w-20 h-32 rounded-lg shadow-lg border-2 border-gray-300 bg-gradient-to-br from-white to-gray-200 flex items-center justify-center cursor-grab select-none transition-transform duration-150 relative
         ${isActive ? 'scale-110 border-purple-600' : ''}
         ${hovered ? 'scale-125 border-blue-400 shadow-2xl' : ''}
         ${disabled ? 'cursor-not-allowed opacity-60' : ''}
@@ -94,7 +97,7 @@ function DraggableCarta({
       onMouseEnter={onHover}
       onMouseLeave={onUnhover}
     >
-      <span className="font-semibold text-xs text-center text-gray-700 pointer-events-none">
+      <span className="absolute bottom-1 left-0 right-0 text-center bg-white/70 rounded px-1 font-semibold text-xs text-gray-700 pointer-events-none">
         {carta.name}
       </span>
     </div>
@@ -255,7 +258,7 @@ const MesaDeJogo: React.FC = () => {
           action: 'play',
           card_index: String(fromIdx),
         });
-        const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/player_action?${params.toString()}`;
+        const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://189.60.85.209:5000'}/player_action?${params.toString()}`;
         const response = await fetch(url);
         const result = await response.json();
         if (result.success) {
@@ -323,7 +326,17 @@ const MesaDeJogo: React.FC = () => {
             <DropZone id="opponent-field" isActiveDrop={false} disabled>
               <div className="flex gap-2">
                 {opponentField.map((carta) => (
-                  <div key={carta.id as string} className="w-20 h-32 rounded-lg shadow border bg-gray-100 flex items-center justify-center text-xs text-gray-500">{carta.name}</div>
+                  <div
+                    key={carta.id as string}
+                    className="w-20 h-32 rounded-lg shadow border bg-gray-100 flex items-center justify-center text-xs text-gray-500 relative"
+                    style={{
+                      backgroundImage: carta.image ? `url(${carta.image})` : undefined,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
+                  >
+                    <span className="absolute bottom-1 left-0 right-0 text-center bg-white/70 rounded px-1 text-xs">{carta.name}</span>
+                  </div>
                 ))}
               </div>
             </DropZone>
@@ -333,7 +346,17 @@ const MesaDeJogo: React.FC = () => {
             <DropZone id="player-field" isActiveDrop={yourTurn && draggingOver === 'player-field'} disabled={!yourTurn}>
               <div className="flex gap-2">
                 {playerField.map((carta) => (
-                  <div key={carta.id as string} className="w-20 h-32 rounded-lg shadow border bg-white flex items-center justify-center text-xs font-bold">{carta.name}</div>
+                  <div
+                    key={carta.id as string}
+                    className="w-20 h-32 rounded-lg shadow border bg-white flex items-center justify-center text-xs font-bold relative"
+                    style={{
+                      backgroundImage: carta.image ? `url(${carta.image})` : undefined,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
+                  >
+                    <span className="absolute bottom-1 left-0 right-0 text-center bg-white/70 rounded px-1 font-bold text-xs">{carta.name}</span>
+                  </div>
                 ))}
               </div>
             </DropZone>

@@ -2,7 +2,7 @@ import React from 'react';
 
 interface CartaType {
   name: string;
-  image: string;
+  image?: string;
 }
 
 interface CartaProps {
@@ -11,9 +11,21 @@ interface CartaProps {
 
 const Carta: React.FC<CartaProps> = ({ carta }) => {
   return (
-    <div className="w-20 h-32 rounded-lg shadow-lg flex items-center justify-center border border-gray-300 bg-gradient-to-br from-white to-gray-200 hover:scale-105 transition-transform">
-      {/* Substitua por <img src={carta.image} /> se tiver imagens */}
-      <span className="font-semibold text-xs text-center text-gray-700">{carta.name}</span>
+    <div
+      className="w-20 h-32 rounded-lg shadow-lg flex items-center justify-center border border-gray-300 hover:scale-105 transition-transform relative overflow-hidden"
+      style={
+        carta.image
+          ? {
+              backgroundImage: `url(${carta.image})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }
+          : {}
+      }
+    >
+      <span className="font-semibold text-xs text-center text-white drop-shadow-md bg-black bg-opacity-40 px-2 py-1 rounded">
+        {carta.name}
+      </span>
     </div>
   );
 };

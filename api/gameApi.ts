@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:5000'; // Mude se seu backend rodar em outro host/porta
+const BASE_URL = 'http://189.60.85.209:5000'; // Mude se seu backend rodar em outro host/porta
 
 export interface CreateRoomResponse {
   room_key: string;
