@@ -1,18 +1,46 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createRoom, joinRoom } from '../api/gameApi';
+import { getFcmToken } from '../messaging';
+
+
+
+
 
 const RoomEntry: React.FC = () => {
   const [roomKey, setRoomKey] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const swReadyRef = useRef(false);
+
+  // Register the service worker on mount and set swReadyRef when ready
+  React.useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/firebase-messaging-sw.js')
+        .then(() => {
+          swReadyRef.current = true;
+        })
+        .catch((err) => {
+          console.error('Service worker registration failed:', err);
+        });
+    }
+  }, []);
 
   const handleCreateRoom = async () => {
     setLoading(true);
     try {
-      const { room_key, first_player_token } = await createRoom();
+      // Wait for service worker to be ready
+      if (!swReadyRef.current) {
+        alert('Service Worker ainda não está pronto. Tente novamente em alguns segundos.');
+        setLoading(false);
+        return;
+      }
+      const fcmToken = await getFcmToken();
+      console.log('FCM token:', fcmToken);
+      const { room_key, first_player_token } = await createRoom(fcmToken!);
       localStorage.setItem('room_key', room_key);
       localStorage.setItem('player_token', first_player_token);
       router.push('/game');
@@ -25,7 +53,14 @@ const RoomEntry: React.FC = () => {
   const handleJoinRoom = async () => {
     setLoading(true);
     try {
-      const { second_player_token } = await joinRoom(roomKey.trim());
+      if (!swReadyRef.current) {
+        alert('Service Worker ainda não está pronto. Tente novamente em alguns segundos.');
+        setLoading(false);
+        return;
+      }
+      const fcmToken = await getFcmToken();
+      console.log('FCM token:', fcmToken);
+      const { second_player_token } = await joinRoom(roomKey.trim(), fcmToken!);
       localStorage.setItem('room_key', roomKey.trim());
       localStorage.setItem('player_token', second_player_token);
       router.push('/game');

@@ -11,13 +11,13 @@ export interface JoinRoomResponse {
   second_player_token: string;
 }
 
-export async function createRoom(): Promise<CreateRoomResponse> {
-  const response = await axios.get(`${BASE_URL}/create_room`);
+export async function createRoom(fcmToken: string): Promise<CreateRoomResponse> {
+  const response = await axios.get(`${BASE_URL}/create_room?fcm_token=${fcmToken}`);
   return response.data;
 }
 
-export async function joinRoom(roomKey: string): Promise<JoinRoomResponse> {
-  const response = await axios.get(`${BASE_URL}/join_room/${roomKey}`);
+export async function joinRoom(roomKey: string, fcmToken: string): Promise<JoinRoomResponse> {
+  const response = await axios.get(`${BASE_URL}/join_room/${roomKey}?fcm_token=${fcmToken}`);
   return response.data;
 }
 
